@@ -1,0 +1,33 @@
+#!/bin/sh
+
+ref=$1
+if [ -Z $ref ]; then
+  ref=`git rev-parse --short HEAD`
+fi
+
+#bundle_identifier=`osascript -e 'tell application "System Events"' -e 'get bundle identifier of first application process whose frontmost is true' -e 'end tell'`
+started=`date +%s`
+repo=`git rev-parse --show-toplevel`
+repo=`basename ${repo}`
+
+function duration() {
+  echo $(( (`date +%s` - $started) / 60 ))
+}
+
+while true; do
+  output=`hub ci-status -v $ref`
+  status=$?
+  message=`echo $output | awk -F ': ' '{print $1}'`
+  url=`echo $output | awk -F ': ' '{print $2}'`
+  if [ $status -eq 2 ]; then # 2 == pending
+    echo -en "\r[$(duration)m] ${message}"
+    sleep 10
+  else
+    which terminal-notifier &>/dev/null && terminal-notifier -title "CI Status - ${repo}/${ref}" -message "$message after $(duration) minutes" -open "$url"
+    break
+  fi
+done
+
+# passthru `hub ci-status` result
+echo $output
+exit $status
