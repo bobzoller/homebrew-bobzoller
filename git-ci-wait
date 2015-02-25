@@ -20,7 +20,7 @@ while true; do
   message=`echo $output | awk -F ': ' '{print $1}'`
   url=`echo $output | awk -F ': ' '{print $2}'`
   if [ $status -eq 2 ]; then # 2 == pending
-    echo -en "\r[$(duration)m] ${message}"
+    printf "\r[$(duration)m] ${message}"
     sleep 10
   else
     which terminal-notifier &>/dev/null && terminal-notifier -title "CI Status - ${repo}/${ref}" -message "$message after $(duration) minutes" -open "$url"
@@ -29,5 +29,5 @@ while true; do
 done
 
 # passthru `hub ci-status` result
-echo $output
+echo "\n${output}"
 exit $status
