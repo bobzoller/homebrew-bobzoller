@@ -1,0 +1,29 @@
+#!/bin/sh
+
+set -e # fail fast
+#set -x # debug
+
+package=$(echo $1 | awk -F@ '{ print $1 }')
+version=$(echo $1 | awk -F@ '{ print $2 }')
+
+if [ -z "${package}" -o -z "${version}" -o "${version}" == "*" ]; then
+  echo "Usage: npm-bump <package>@<version>"
+  exit 1
+fi
+
+git pull
+npm prune
+npm install
+npm ls ${package}
+if npm ls ${package}@${version}; then
+  echo "${package} already at ${version}"
+  exit 0
+fi
+
+git checkout -b bump-${package}-to-${version}
+npm install --save ${package}@${version}
+clingwrap ${package}
+git commit -a -m "bump ${package} to ${version}"
+git push origin bump-${package}-to-${version}
+hub pull-request -m "bump ${package} to ${version}\n\n/cc @goodeggs/delivery-eng"
+
