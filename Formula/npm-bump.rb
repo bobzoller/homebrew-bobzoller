@@ -1,9 +1,9 @@
 require 'formula'
 
-class NpmBumpWait < Formula
+class NpmBump < Formula
   homepage 'https://github.com/bobzoller/homebrew-bobzoller/'
   url 'https://github.com/bobzoller/homebrew-bobzoller.git'
-  version '1.0.0'
+  version '1.0.1'
 
   skip_clean 'bin'
 
