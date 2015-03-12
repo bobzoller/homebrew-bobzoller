@@ -25,5 +25,5 @@ npm install --save ${package}@${version}
 clingwrap ${package}
 git commit -a -m "bump ${package} to ${version}"
 git push origin bump-${package}-to-${version}
-hub pull-request -m "bump ${package} to ${version}\n\n/cc @goodeggs/delivery-eng"
+echo "bump ${package} to ${version}\n\n/cc @goodeggs/delivery-eng" | hub pull-request -F -
 
